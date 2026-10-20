@@ -8,9 +8,9 @@
 import Foundation
 
 @Observable
-class Coursesviewmodel {
+class CoursesViewModel {
     
-    private let courses : [Course] = [
+    var courses : [Course] = [
         
        
             Course(
