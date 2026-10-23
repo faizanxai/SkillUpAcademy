@@ -7,8 +7,12 @@
 
 import Foundation
 
-struct Course : Codable, Identifiable{
-    let id : Int
+struct Course : Codable, Identifiable, Equatable{
+    let id : String
     let name : String
     let description : String
+}
+
+struct CourseraResponse: Codable {
+    let elements: [Course]
 }

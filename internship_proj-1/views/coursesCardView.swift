@@ -19,6 +19,7 @@ struct coursesCardView: View {
                         Text(course.description)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
+                            .lineLimit(6)
                            
                     }
                     .padding()
@@ -31,5 +32,5 @@ struct coursesCardView: View {
 
 
 #Preview {
-    coursesCardView(course: Course(id: 44, name: "String", description: "d"))
+    coursesCardView(course: Course(id: "44", name: "String", description: "d"))
 }
