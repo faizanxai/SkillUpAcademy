@@ -8,69 +8,70 @@
 import Foundation
 import Observation
 
-
-enum APIError : LocalizedError{
+enum APIError: LocalizedError {
     case invalidURL
     case invalidResponse
     case decoding(Error)
     case networkError(Error)
-    
+
     var errorDescription: String? {
-        switch self{
+        switch self {
         case .invalidURL:
             return "The URL is invalid"
+
         case .invalidResponse:
             return "The Response is invalid from server"
+
         case .decoding(let error):
-            return "Failed to decode response: \(error.localizedDescription) "
+            return "Failed to decode response: \(error.localizedDescription)"
+
         case .networkError(let error):
-            return   "Network Error : \(error.localizedDescription)"
-            
+            return "Network Error: \(error.localizedDescription)"
         }
     }
 }
-
-
 
 
 @Observable
 class CoursesViewModel {
-    
-    
-    enum State : Equatable{
+
+    enum State: Equatable {
         case idle
         case loading
         case loaded([Course])
         case error(String)
-        
-        
     }
-    var state : State = .idle
-    var courses : [Course] = []
-    private let service : courseFetchService
-    init( service: courseFetchService = defaultCourseFetcher()) {
+
+    var state: State = .idle
+    var courses: [Course] = []
+
+    private let service: courseFetchService
+
+    init(service: courseFetchService = defaultCourseFetcher()) {
         self.service = service
     }
-    
-    func fetch () async {
-        
-        guard state == .idle else {return}
+
+    func fetch() async {
+        guard state != .loading else { return }
+
         state = .loading
+
         do {
             let courses = try await service.fetchCourses()
+            self.courses = courses
             self.state = .loaded(courses)
-        }catch let error as APIError{
-            self.state = .error(error.errorDescription ?? "Unknown error")
-        }catch{
-            self.state = .error("unknown error")
+
+        } catch let error as APIError {
+            self.state = .error(
+                error.errorDescription ?? "Unknown error"
+            )
+
+        } catch {
+            self.state = .error(error.localizedDescription)
         }
-        
-        
-        
-        
-        
     }
 }
+
 //
 //Course(
 //    id: 1,

@@ -8,32 +8,72 @@
 import SwiftUI
 
 struct CoursesListView: View {
-    @State private var coursesViewModel = CoursesViewModel()
+
+    let coursesViewModel: CoursesViewModel
+    let favouritesViewModel: FavouritesViewModel
 
     var body: some View {
         NavigationStack {
-            switch coursesViewModel.state {
-            case .idle:
-                Text("No Courses yet")
-            case .loading:
-                ProgressView("Loading ...")
-            case .loaded(let courses):
-                List(courses) { course in
-                    coursesCardView(course: course)
+            Group {
+                switch coursesViewModel.state {
+
+                case .idle:
+                    ContentUnavailableView(
+                        "No Courses Yet",
+                        systemImage: "book"
+                    )
+
+                case .loading:
+                    ProgressView("Loading Courses...")
+
+                case .loaded(let courses):
+                    List(courses) { course in
+                        coursesCardView(
+                            course: course,
+                            favouritesViewModel: favouritesViewModel
+                        )
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                    }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .background(Color("AppBackground"))
+
+                case .error(let error):
+                    ContentUnavailableView {
+                        Label(
+                            "Unable to Load Courses",
+                            systemImage: "exclamationmark.triangle"
+                        )
+                    } description: {
+                        Text(error)
+                    } actions: {
+                        Button("Retry", systemImage: "arrow.clockwise") {
+                            Task {
+                                await coursesViewModel.fetch()
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
                 }
-                .navigationTitle("SkillUp Academy")
-            case .error(let error):
-                Text(error).foregroundStyle(.pink)
-                Button("Retry", systemImage: "arrow.clockwise") {
-                    Task { await coursesViewModel.fetch() }
-                }
-                .buttonStyle(.borderedProminent)
             }
+            .background {
+                Color("AppBackground")
+                    .ignoresSafeArea()
+            }
+            .navigationTitle("SkillUp Academy")
+            .toolbarBackground(
+                Color("AppBackground"),
+                for: .navigationBar
+            )
+            .toolbarBackground(.visible, for: .navigationBar)
         }
-        .task { await coursesViewModel.fetch() }
     }
 }
 
 #Preview {
-    CoursesListView()
+    CoursesListView(
+        coursesViewModel: CoursesViewModel(),
+        favouritesViewModel: FavouritesViewModel()
+    )
 }
