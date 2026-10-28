@@ -5,7 +5,6 @@
 //  Created by Faizan Nabi on 20/10/2026.
 //
 
-
 import SwiftUI
 
 struct ContentView: View {
@@ -14,20 +13,23 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            Tab("All", systemImage: "house") {
-                CoursesListView(
-                    coursesViewModel: coursesViewModel,
-                    favouritesViewModel: favouritesViewModel
-                )
+            CoursesListView(
+                coursesViewModel: coursesViewModel,
+                favouritesViewModel: favouritesViewModel
+            )
+            .tabItem {
+                Label("All", systemImage: "house")
             }
 
-            Tab("Favourites", systemImage: "heart") {
-                FavouritesScreen(
-                    coursesViewModel: coursesViewModel,
-                    favouritesViewModel: favouritesViewModel
-                )
+            FavouritesScreen(
+                coursesViewModel: coursesViewModel,
+                favouritesViewModel: favouritesViewModel
+            )
+            .tabItem {
+                Label("Favourites", systemImage: "heart")
             }
-        }.background{
+        }
+        .background {
             Color("AppBackground")
                 .ignoresSafeArea()
         }
