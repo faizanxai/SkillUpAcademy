@@ -44,6 +44,7 @@ class CoursesViewModel {
 
     var state: State = .idle
     var courses: [Course] = []
+    var isShowingCachedData : Bool = false
 
     private let service: courseFetchService
 
@@ -55,19 +56,29 @@ class CoursesViewModel {
         guard state != .loading else { return }
 
         state = .loading
+        isShowingCachedData = false
 
         do {
             let courses = try await service.fetchCourses()
             self.courses = courses
             self.state = .loaded(courses)
-
-        } catch let error as APIError {
-            self.state = .error(
-                error.errorDescription ?? "Unknown error"
-            )
+            self.isShowingCachedData = false
+            
+            CourseCache.save(courses)
 
         } catch {
-            self.state = .error(error.localizedDescription)
+            
+            if let cached = CourseCache.load(), !cached.isEmpty {
+                self.courses = cached
+                self.state = .loaded(cached)
+                self.isShowingCachedData = true
+            } else {
+                let message = (error as? APIError)?.errorDescription
+                ?? error.localizedDescription
+                self.state = .error(message)
+            }
+            
+            
         }
     }
 }

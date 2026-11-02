@@ -27,17 +27,28 @@ struct CoursesListView: View {
                     ProgressView("Loading Courses...")
 
                 case .loaded(let courses):
-                    List(courses) { course in
-                        coursesCardView(
-                            course: course,
-                            favouritesViewModel: favouritesViewModel
-                        )
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
+                    VStack(spacing: 0) {
+                        if coursesViewModel.isShowingCachedData {
+                            Text("Offline mode – showing cached courses")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(Color.gray.opacity(0.2))
+                        }
+
+                        List(courses) { course in
+                            coursesCardView(
+                                course: course,
+                                favouritesViewModel: favouritesViewModel
+                            )
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                        }
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden)
+                        .background(Color("AppBackground"))
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
-                    .background(Color("AppBackground"))
 
                 case .error(let error):
                     ContentUnavailableView {
@@ -56,6 +67,9 @@ struct CoursesListView: View {
                         .buttonStyle(.borderedProminent)
                     }
                 }
+            }
+            .task {
+                await coursesViewModel.fetch()
             }
             .background {
                 Color("AppBackground")
