@@ -11,6 +11,9 @@ struct coursesCardView: View {
     let course: Course
     let favouritesViewModel: FavouritesViewModel
 
+    private let cardBackground = Color(red: 0.95, green: 0.93, blue: 0.89)
+    private let cardCornerRadius: CGFloat = 12
+
     var body: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 8) {
@@ -33,12 +36,13 @@ struct coursesCardView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(red: 0.95, green: 0.93, blue: 0.89))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .background(cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: cardCornerRadius))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: cardCornerRadius)
                 .stroke(Color.black.opacity(0.15), lineWidth: 1)
         )
+        .colorScheme(.light)   // ✅ forces dark text on the light beige card
     }
 }
 

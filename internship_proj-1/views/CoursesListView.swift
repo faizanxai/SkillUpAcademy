@@ -76,6 +76,7 @@ struct CoursesListView: View {
                     .ignoresSafeArea()
             }
             .navigationTitle("SkillUp Academy")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(
                 Color("AppBackground"),
                 for: .navigationBar

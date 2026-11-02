@@ -51,6 +51,7 @@ struct FavouritesScreen: View {
                     .ignoresSafeArea()
             }
             .navigationTitle("Favourites")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(
                 Color("AppBackground"),
                 for: .navigationBar
